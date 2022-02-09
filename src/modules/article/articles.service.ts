@@ -5,6 +5,7 @@ import { ArticlesEntity } from './articles.entity';
 import { getPagination } from 'src/common/utils/index.util';
 import { ListArticleDto } from './dto/list-article.dto';
 import { CreateArticleDTO } from './dto/create-article.dto';
+import { UpdateArticleDTO } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticlesService {
@@ -46,5 +47,14 @@ export class ArticlesService {
       condition['id'] = Not(id);
     }
     return await this.articlesRepository.findOne(condition);
+  }
+
+  async findById(id: string): Promise<ArticlesEntity> {
+    return await this.articlesRepository.findOne(id);
+  }
+
+  // 更新
+  async update(article: UpdateArticleDTO): Promise<void> {
+    await this.articlesRepository.update(article.id, article);
   }
 }

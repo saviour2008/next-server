@@ -1,10 +1,26 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  Param,
+  Patch,
+  Put,
+} from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Result } from 'src/common/dto/result.dto';
 import { ErrorCode } from 'src/common/exception/error.code';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDTO } from './dto/create-article.dto';
 import { ListArticleDto } from './dto/list-article.dto';
+import { UpdateArticleDTO } from './dto/update-article.dto';
 
 @Controller('articles')
 @ApiTags('文章')
@@ -21,12 +37,6 @@ export class ArticlesController {
   })
   async findAll(@Query() articleQuery: ListArticleDto) {
     const articleList = await this.articlesService.findAll(articleQuery);
-
-    // return {
-    //   code: 'success',
-    //   message: '',
-    //   data: { ...articleList },
-    // };
     return new Result().ok(articleList);
   }
 
@@ -45,5 +55,29 @@ export class ArticlesController {
     }
     await this.articlesService.create(article);
     return new Result().ok();
+  }
+
+  @Put('update')
+  @ApiOperation({ summary: '更新文章信息' })
+  async update(@Body() article: UpdateArticleDTO) {
+    // const targetArticle = await this.articlesService.findById(article.id+'');
+    // if (targetArticle) {
+    //   await this.articlesService.update(targetArticle);
+    // }
+    await this.articlesService.update(article);
+    return new Result().ok();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: '查询文章' })
+  @ApiParam({ name: 'id' })
+  @ApiResponse({
+    status: 200,
+    description: 'get ...',
+    type: 'string',
+  })
+  async findOne(@Param('id') id: string) {
+    const article = await this.articlesService.findById(id);
+    return new Result().ok(article);
   }
 }

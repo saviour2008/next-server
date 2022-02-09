@@ -1,5 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+export enum RoleType {
+  Admin = 'admin',
+  Visitor = 'visitor',
+  Manager = 'manager',
+  Operator = 'operator',
+}
+
 @Entity({ name: 'users' })
 export class UsersEntity {
   @PrimaryGeneratedColumn()
@@ -13,4 +20,7 @@ export class UsersEntity {
 
   @Column()
   status: boolean;
+
+  @Column()
+  role: RoleType;
 }

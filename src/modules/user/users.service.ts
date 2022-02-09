@@ -14,12 +14,6 @@ export class UsersService {
   async findAll(): Promise<UsersEntity[]> {
     // relations: ['photos']， 联合查询
     return await this.usersRepository.find();
-
-    // 或者使用queryBuilder
-    // return await getRepository(UsersEntity)
-    //   .createQueryBuilder("user")
-    //   .leftJoinAndSelect("user.photos", "photo")
-    //   .getMany()
   }
 
   async create(user): Promise<UsersEntity[]> {
@@ -58,5 +52,12 @@ export class UsersService {
       // you need to release a queryRunner which was manually instantiated
       await queryRunner.release();
     }
+  }
+
+  async findByName(name: string, password: string): Promise<UsersEntity> {
+    const condition = { name, password };
+    const user = await this.usersRepository.findOne(condition);
+    console.log('user---' + JSON.stringify(user));
+    return user;
   }
 }

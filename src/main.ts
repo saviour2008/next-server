@@ -17,6 +17,17 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('doc', app, document);
+  // app.use(express.json({ limit: '50mb' })); //For JSON requests
+  // app.use(
+  //   express.urlencoded({
+  //     limit: '50mb',
+  //     extended: false,
+  //   }),
+  // );
+  var bodyParser = require('body-parser');
+  //handle request entity too large
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   await app.listen(3000);
 }
 bootstrap();

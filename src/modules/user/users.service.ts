@@ -2,6 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Repository, Connection, getRepository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersEntity } from './users.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
@@ -9,7 +10,8 @@ export class UsersService {
     @InjectRepository(UsersEntity)
     private readonly usersRepository: Repository<UsersEntity>,
     private connection: Connection,
-  ) {}
+  ) // private readonly jwtService: JwtService,
+  {}
 
   async findAll(): Promise<UsersEntity[]> {
     // relations: ['photos']， 联合查询
@@ -17,20 +19,20 @@ export class UsersService {
   }
 
   async create(user): Promise<UsersEntity[]> {
-    const { name } = user;
-    const u = await getRepository(UsersEntity).findOne({ where: { name } });
+    // const { name } = user;
+    // const u = await getRepository(UsersEntity).findOne({ where: { name } });
     //   .createQueryBuilder('users')
     //   .where('users.name = :name', { name });
     // const u = await qb.getOne();
-    if (u) {
-      throw new HttpException(
-        {
-          message: 'Input data validation failed',
-          error: 'name must be unique.',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (u) {
+    //   throw new HttpException(
+    //     {
+    //       message: 'Input data validation failed',
+    //       error: 'name must be unique.',
+    //     },
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
     return await this.usersRepository.save(user);
   }
 
@@ -54,10 +56,28 @@ export class UsersService {
     }
   }
 
-  async findByName(name: string, password: string): Promise<UsersEntity> {
-    const condition = { name, password };
+  async findByLogin(name: string): Promise<UsersEntity> {
+    const condition = { name };
     const user = await this.usersRepository.findOne(condition);
     console.log('user---' + JSON.stringify(user));
     return user;
   }
+
+  async findUser(name: string, phone: string): Promise<UsersEntity> {
+    const condition = { name, phone };
+    const user = await this.usersRepository.findOne(condition);
+    return user;
+  }
+
+  // 根据取出来的user信息生成 token
+  // async certificate(user: UsersEntity) {
+  //   const payload = {
+  //     id: user.id,
+  //     name: user.name,
+  //     phone: user.phone,
+  //     password: user.password,
+  //   };
+  //   const token = this.jwtService.sign(payload);
+  //   return token;
+  // }
 }

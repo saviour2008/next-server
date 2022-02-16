@@ -15,12 +15,20 @@ export class UsersEntity {
   @Column({ length: 20 })
   name: string;
 
-  @Column('varchar')
+  @Column({ length: 11 })
+  phone: string;
+
+  // 加密后的密码
+  @Column('text') //  { select: false }这个属性的意义
   password: string;
 
-  @Column()
+  // 加密盐
+  @Column('text') //  { select: false }这个属性的意义
+  salt: string;
+
+  @Column({ default: true })
   status: boolean;
 
-  @Column()
+  @Column({ default: 'visitor' })
   role: RoleType;
 }

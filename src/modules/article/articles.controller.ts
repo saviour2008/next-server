@@ -8,8 +8,11 @@ import {
   Patch,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
@@ -82,6 +85,8 @@ export class ArticlesController {
     return new Result().ok(article);
   }
 
+  @UseGuards(AuthGuard('jwt')) //根据token来鉴权
+  // @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: '删除文章' })
   async remove(@Param('id') id: string) {

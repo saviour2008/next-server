@@ -34,7 +34,7 @@ export class UsersController {
     switch (authResult.code) {
       case 1:
         const token = await this.authService.certificate(authResult.user);
-        return new Result().ok({ info: { token } });
+        return new Result().ok({ token, role: authResult.user.role });
       case 2:
         return new Result().error(
           new ErrorCode().INTERNAL_SERVER_ERROR,
@@ -48,10 +48,9 @@ export class UsersController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('register')
   async register(@Body() param) {
-    const user = await this.usersService.findUser(param.userName, param.phone);
+    const user = await this.usersService.findByLogin(param.userName);
     if (user) {
       return new Result().error(
         new ErrorCode().INTERNAL_SERVER_ERROR,
@@ -65,6 +64,7 @@ export class UsersController {
     newUser.phone = param.phone;
     newUser.password = hashPassword;
     newUser.salt = salt;
+    newUser.role = param.role;
     const insertedUser = await this.usersService.create(newUser);
     return new Result().ok();
   }

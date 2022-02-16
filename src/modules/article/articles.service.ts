@@ -28,7 +28,7 @@ export class ArticlesService {
       .getManyAndCount();
 
     const [list, total] = await getList;
-    console.log(total);
+    // console.log(total);
     const pagination = getPagination(total, pageSize, page);
     return {
       records: list,

@@ -85,7 +85,7 @@ export class ArticlesController {
     return new Result().ok(article);
   }
 
-  @UseGuards(AuthGuard('jwt')) //根据token来鉴权
+  @UseGuards(AuthGuard('jwt')) //根据token来鉴权，只要登录后有token，都可以删除
   // @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: '删除文章' })

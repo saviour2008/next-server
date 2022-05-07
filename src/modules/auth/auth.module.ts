@@ -18,6 +18,6 @@ import { UsersModule } from '../user/users.module';
     UsersModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  exports: [AuthService, LocalStrategy, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}

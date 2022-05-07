@@ -1,5 +1,5 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { Repository, Connection, getRepository, Not } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { Repository, Connection, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticlesEntity } from './articles.entity';
 import { getPagination } from 'src/common/utils/index.util';

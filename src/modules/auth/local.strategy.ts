@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
+  // jwt策略是基于该策略的封装，该策略是自定义策略
   constructor(private readonly authService: AuthService) {
     super();
   }

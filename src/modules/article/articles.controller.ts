@@ -27,17 +27,12 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDTO } from './dto/create-article.dto';
 import { ListArticleDto } from './dto/list-article.dto';
 import { UpdateArticleDTO } from './dto/update-article.dto';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../user/users.service';
-import { RoleType } from '../user/users.entity';
 
 @Controller('articles')
 @ApiTags('文章')
 export class ArticlesController {
   constructor(
-    private readonly usersService: UsersService,
     private readonly articlesService: ArticlesService,
-    private readonly jwtService: JwtService,
   ) {}
 
   @Get()
@@ -94,21 +89,11 @@ export class ArticlesController {
     return new Result().ok(article);
   }
 
-  @UseGuards(AuthGuard('jwt')) //根据token来鉴权，只要登录后有token，都可以删除
+  @UseGuards(AuthGuard('jwt')) //根据token来鉴权，解析token的role是admin，才可以删除
   // @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: '删除文章' })
   async remove(@Req() request: Request, @Param('id') id: string) {
-    const tokenData: any = this.jwtService.decode(
-      request.headers.authorization.replace('Bearer ', ''),
-    );
-    const user = await this.usersService.findByLogin(tokenData.name);
-    if (user.role !== RoleType.Admin) {
-      return new Result().error(
-        new ErrorCode().INTERNAL_SERVER_ERROR,
-        '该用户不是admin，无权限删除',
-      );
-    }
     const article = await this.articlesService.findById(id);
     if (!article) {
       return new Result().error(

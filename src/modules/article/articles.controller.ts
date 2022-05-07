@@ -9,8 +9,10 @@ import {
   Put,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -25,11 +27,18 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDTO } from './dto/create-article.dto';
 import { ListArticleDto } from './dto/list-article.dto';
 import { UpdateArticleDTO } from './dto/update-article.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../user/users.service';
+import { RoleType } from '../user/users.entity';
 
 @Controller('articles')
 @ApiTags('文章')
 export class ArticlesController {
-  constructor(private readonly articlesService: ArticlesService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly articlesService: ArticlesService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: '查询文章列表' })
@@ -89,7 +98,17 @@ export class ArticlesController {
   // @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: '删除文章' })
-  async remove(@Param('id') id: string) {
+  async remove(@Req() request: Request, @Param('id') id: string) {
+    const tokenData: any = this.jwtService.decode(
+      request.headers.authorization.replace('Bearer ', ''),
+    );
+    const user = await this.usersService.findByLogin(tokenData.name);
+    if (user.role !== RoleType.Admin) {
+      return new Result().error(
+        new ErrorCode().INTERNAL_SERVER_ERROR,
+        '该用户不是admin，无权限删除',
+      );
+    }
     const article = await this.articlesService.findById(id);
     if (!article) {
       return new Result().error(

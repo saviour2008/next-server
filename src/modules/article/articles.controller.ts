@@ -94,6 +94,7 @@ export class ArticlesController {
   @Delete(':id')
   @ApiOperation({ summary: '删除文章' })
   async remove(@Req() request: Request, @Param('id') id: string) {
+    console.log('删除文章成功，此处返回的是JwtStrategy里面validate方法的返回值', request.user);
     const article = await this.articlesService.findById(id);
     if (!article) {
       return new Result().error(

@@ -1,3 +1,11 @@
+/*
+ * @Author: jun.zhao saviour2008@126.com
+ * @Date: 2022-10-05 17:39:09
+ * @LastEditors: jun.zhao saviour2008@126.com
+ * @LastEditTime: 2022-10-05 22:24:13
+ * @FilePath: \next-server-demo\src\modules\article\articles.service.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Injectable } from '@nestjs/common';
 import { Repository, Connection, Not } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';

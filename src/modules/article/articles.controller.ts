@@ -27,12 +27,14 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDTO } from './dto/create-article.dto';
 import { ListArticleDto } from './dto/list-article.dto';
 import { UpdateArticleDTO } from './dto/update-article.dto';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('articles')
 @ApiTags('文章')
 export class ArticlesController {
   constructor(
     private readonly articlesService: ArticlesService,
+    private readonly authService: AuthService,
   ) {}
 
   @Get()
@@ -50,7 +52,7 @@ export class ArticlesController {
 
   @Post()
   @ApiOperation({ summary: '新增文章信息' })
-  async create(@Body() article: CreateArticleDTO) {
+  async create(@Body() article: CreateArticleDTO, @Req() request: Request) {
     const existSameArticle = await this.articlesService.findByTitle(
       article.title,
       '',
@@ -60,8 +62,9 @@ export class ArticlesController {
         new ErrorCode().INTERNAL_SERVER_ERROR,
         '文章已存在',
       );
-    }
-    await this.articlesService.create(article);
+    };
+    const userInfo = await this.authService.getUserInfo(request.headers.authorization);
+    await this.articlesService.create({...article,creator: userInfo.name, updater: userInfo.name});
     return new Result().ok();
   }
 
